@@ -1,0 +1,21 @@
+@use '@angular/material' as mat;
+
+$devconnect-primary: mat.define-palette(mat.$indigo-palette, 600, 300, 900);
+$devconnect-accent: mat.define-palette(mat.$cyan-palette, A200, A100, A400);
+$devconnect-warn: mat.define-palette(mat.$red-palette);
+
+$devconnect-typography: mat.define-typography-config(
+  $headline: mat.define-typography-level(32px, 48px, 700),
+  $body-1: mat.define-typography-level(16px, 24px, 400)
+);
+
+$devconnect-theme: mat.define-light-theme((
+  color: (
+    primary: $devconnect-primary,
+    accent: $devconnect-accent,
+    warn: $devconnect-warn
+  ),
+  typography: $devconnect-typography,
+));
+
+@include mat.all-component-themes($devconnect-theme);
