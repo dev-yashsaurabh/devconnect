@@ -7,7 +7,8 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "standalone": true
         }
       },
       "root": "",
@@ -27,8 +28,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "src/styles/_devconnect-theme.scss"
+              "src/styles.scss"
             ]
           },
           "configurations": {

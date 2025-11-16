@@ -1,6 +1,7 @@
 // This Sass mixin will define CSS variables that are used for styling Angular Material
 // components according to the Material 3 design spec.
 // custom components at https://material.angular.dev/guide/theming
+@use './styles/_devconnect-theme' as *;
 
 html, body {
   height: 100%;
