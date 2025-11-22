@@ -1,74 +1,102 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { computed, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult } from '@azure/msal-browser';
 
 export interface User {
-  id: number;
-  name: string;
-  email: string;
-  role: 'admin' | 'developer';
-  token: string;
+  email: string,
+  role: 'admin' | 'developer',
+  provider: 'jwt' | 'msal',
+  name: string,
+  token: string,
+  id: number
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // Signal to store current user
-  private _user = signal<User | null>(null);
 
-  // Computed signal to know if logged in
+  private _user = signal<User | null>(null);
+  private _provider = signal<'jwt' | 'msal' | null>(null);
+
   isLoggedIn = computed(() => !!this._user());
 
-  constructor(private http: HttpClient, private router: Router) {
-    // Load user from localStorage if exists
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private msal: MsalService
+  ) {
     const stored = localStorage.getItem('devconnect_user');
     if (stored) {
-      this._user.set(JSON.parse(stored));
+      const parsed = JSON.parse(stored);
+      this._user.set(parsed);
+      this._provider.set(parsed.provider);
     }
   }
 
-  /** Observable / Signal getter */
   currentUser() {
     return this._user();
   }
 
-  /** Login method */
   login(email: string, password: string) {
-    // Call your backend API here
     return this.http.post<User>('/api/login', { email, password }).subscribe({
       next: (user) => {
-        // Save user in signal
-        this._user.set(user);
-        // Save in localStorage
-        localStorage.setItem('devconnect_user', JSON.stringify(user));
-        // Redirect based on role
-        if (user.role === 'admin') {
-          this.router.navigate(['/admin']);
-        } else {
-          this.router.navigate(['/feed']);
-        }
+        this._provider.set('jwt');
+
+        this._user.set({ ...user, provider: 'jwt' });
+        localStorage.setItem('devconnect_user', JSON.stringify({ ...user, provider: 'jwt' }));
+
+        this.redirectByRole(user.role);
       },
-      error: (err) => {
-        console.error('Login failed:', err);
-      }
+      error: err => console.error('Login failed:', err)
     });
   }
 
-  /** Logout method */
+  loginWithMicrosoft() {
+    this.msal.loginPopup().subscribe({
+      next: (result: AuthenticationResult) => {
+        this.msal.instance.setActiveAccount(result.account);
+
+        const user = {
+          id: 0,
+          name: result.account?.name ?? '',
+          email: result.account?.username ?? '',
+          role: 'admin',
+          token: '',
+          provider: 'msal'
+        } as User;
+
+        this._user.set(user);
+        this._provider.set('msal');
+
+        localStorage.setItem('devconnect_user', JSON.stringify(user));
+
+        this.redirectByRole(user.role);
+      },
+      error: error => console.log('MSAL Login Failed', error)
+    });
+  }
+
   logout() {
+    if (this._provider() === 'msal') {
+      this.msal.logoutPopup();
+    }
     this._user.set(null);
+    this._provider.set(null);
     localStorage.removeItem('devconnect_user');
     this.router.navigate(['/login']);
   }
 
-  /** Check role */
   hasRole(role: 'admin' | 'developer') {
-    const user = this._user();
-    return user ? user.role === role : false;
+    return this._user()?.role === role;
   }
 
-  /** Get JWT token */
   getToken() {
-    const user = this._user();
-    return user?.token || null;
+    return this._provider() === 'jwt' ? this._user()?.token : null;
+  }
+
+  private redirectByRole(role: string) {
+    if (role === 'admin') this.router.navigate(['/admin']);
+    else this.router.navigate(['/feed']);
   }
 }
