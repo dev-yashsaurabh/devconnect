@@ -1,0 +1,26 @@
+:host {
+    display: block;
+    margin: 40px auto;
+    max-width: 600px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+mat-card-header {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.example-form {
+    margin: 2rem;
+
+    .example-full-width {
+        width: 100%;
+    }
+}
+
+button {
+    display: block;
+    margin: 16px auto;
+}
