@@ -1,44 +1,66 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpErrorResponse
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { AuthService } from "./auth.service";
+import { catchError, from, Observable, switchMap, throwError } from "rxjs";
+import { Router } from "@angular/router";
+import { MsalService } from "@azure/msal-angular";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService, private router: Router) {}
+
+  constructor(
+    private auth: AuthService,
+    private msal: MsalService,
+    private router: Router
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let authReq = req;
 
-    // Skip token for public endpoints like login/register
-    const publicEndpoints = ['/api/login', '/api/register'];
-    const isPublic = publicEndpoints.some(url => req.url.includes(url));
+    const provider = this.auth.currentUser()?.provider;
 
-    if (!isPublic) {
+    // Skip public endpoints
+    const isPublic = ['/api/login', '/api/register'].some(
+      url => req.url.includes(url)
+    );
+    if (isPublic) return next.handle(req);
+    if (provider === 'jwt') {
       const token = this.auth.getToken();
       if (token) {
-        authReq = req.clone({
+        const authReq = req.clone({
           setHeaders: { Authorization: `Bearer ${token}` }
         });
+        return this.handle401(authReq, next);
+      }
+    }
+    
+    if (provider === 'msal') {
+      const account = this.msal.instance.getActiveAccount();
+
+      if (account) {
+        return from(
+          this.msal.acquireTokenSilent({
+            scopes: ['user.read'],
+            account
+          })
+        ).pipe(
+          switchMap(result => {
+            const authReq = req.clone({
+              setHeaders: { Authorization: `Bearer ${result.accessToken}` }
+            });
+            return this.handle401(authReq, next);
+          })
+        );
       }
     }
 
-    // Handle response and catch 401 errors
-    return next.handle(authReq).pipe(
+    return this.handle401(req, next);
+  }
+
+  private handle401(req: HttpRequest<any>, next: HttpHandler) {
+    return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          // Unauthorized, logout user
           this.auth.logout();
-          // Optionally show a toast / message
-          console.error('Unauthorized, redirecting to login');
           this.router.navigate(['/login']);
         }
         return throwError(() => error);
