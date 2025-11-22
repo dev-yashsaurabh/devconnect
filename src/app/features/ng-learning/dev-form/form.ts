@@ -9,7 +9,12 @@ import { MatInputModule } from "@angular/material/input";
     selector: 'dev-form',
     styleUrls: ['./dev-form.scss'],
     templateUrl: 'dev-form.html',
-    imports: [MatCardModule, MatInputModule, ReactiveFormsModule, MatButtonModule],
+    imports: [
+        MatCardModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+    ],
 })
 export class DevForm {
     contactForm: FormGroup;
