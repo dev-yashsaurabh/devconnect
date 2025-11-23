@@ -1,17 +1,31 @@
 import { HttpClient } from "@angular/common/http";
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component, inject, OnInit } from "@angular/core";
 
 @Component({
-    selector: `dev-http`,
+    selector: 'dev-http',
     templateUrl: './dev-http.html',
-    styleUrl: './dev-http.scss'
+    styleUrls: ['./dev-http.scss'],
+    standalone: true,
 })
-export class DevHttp {
+export class DevHttp implements OnInit {
     posts: any = [];
-    constructor(private http: HttpClient) {
-        this.http.get('https://jsonplaceholder.typicode.com/users').subscribe((response: any) => {
-            this.posts = response;
-            console.log(this.posts)
-        })
+    jsonData: any = [];
+
+    private http = inject(HttpClient);
+    private cdr = inject(ChangeDetectorRef);
+
+    ngOnInit(): void {
+        this.http.get('https://jsonplaceholder.typicode.com/users')
+            .subscribe((response: any) => {
+                this.posts = response;
+                console.log(this.posts);
+                this.cdr.detectChanges();
+            });
+
+        this.http.get('/data.json')
+            .subscribe(resp => {
+                this.jsonData = resp;
+                console.log(this.jsonData);
+            });
     }
 }
