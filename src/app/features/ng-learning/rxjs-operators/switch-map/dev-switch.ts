@@ -25,27 +25,35 @@ export class SwitchMapComponent implements OnInit {
             debounceTime(5000),
             switchMap((value) => this.http.get(`https://jsonplaceholder.typicode.com/todos/${value}`).
                         pipe(
-                                catchError((err) => {
-                        this.snackBar.open('API call failed!', 'Close', { duration: 3000 });
-                        return of(err);
-                    })
-        ))).subscribe((resp: any) => {
+                            catchError((err) => {
+                            this.snackBar.open('API call failed!', 'Close', { duration: 3000 });
+                            return of(err);
+                    }))
+                ),
+            ).subscribe((resp: any) => {
             this.post.set(resp);
 
         });
     }
 
+    private timerInterval: any;
+
     private startTimer(seconds: number) {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+        }
+
         this.timer.set(seconds);
 
-        const interval = setInterval(() => {
+        this.timerInterval = setInterval(() => {
             this.timer.update(t => {
-            if (t <= 1) {
-                clearInterval(interval);
-                return 0;
-            }
-            return t - 1;
+                if (t <= 1) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                    return 0;
+                }
+                return t - 1;
             });
-            }, 1000);
-            }
+        }, 1000);
+    }
 }
