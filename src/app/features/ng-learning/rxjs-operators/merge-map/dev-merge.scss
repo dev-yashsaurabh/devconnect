@@ -1,0 +1,11 @@
+mat-list, h2 {
+    display: block;
+    max-width: 500px;
+    width: 100%;
+    margin: 40px auto;
+    text-align: center;
+}
+
+mat-list-item:nth-child(even) {
+    background-color: skyblue;
+}
