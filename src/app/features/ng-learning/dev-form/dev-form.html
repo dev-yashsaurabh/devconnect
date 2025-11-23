@@ -4,13 +4,23 @@
     <form class="example-form" [formGroup]="contactForm" (ngSubmit)="onSubmit()">
     <mat-form-field class="example-full-width">
         <mat-label>Email</mat-label>
-        <input type="email" matInput [formControl]="email">
-        <mat-hint>Errors appear instantly!</mat-hint>
+        <input type="email" matInput [formControl]="email" [errorStateMatcher]="matcher">
+        <mat-hint>abc@gmail.com</mat-hint>
         @if (email.hasError('email') && !email.hasError('required')) {
         <mat-error>Please enter a valid email address</mat-error>
         }
         @if (email.hasError('required')) {
-        <mat-error>Email is <strong>required</strong></mat-error>
+        <mat-error>Email is <strong>required</strong>.</mat-error>
+        }
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input type="name" matInput [formControl]="name" [errorStateMatcher]="matcher">
+        @if (name.hasError('required')) {
+        <mat-error>name is <strong>required</strong>.</mat-error>
+        }
+        @if (contactForm.get('name')?.hasError('invalidName')) {
+            <mat-error>Only alphabets and spaces are allowed</mat-error>
         }
     </mat-form-field>
     <button matButton="filled">Submit</button>
