@@ -2,15 +2,15 @@ import { HttpClient } from "@angular/common/http";
 import { ChangeDetectorRef, Component, inject } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatListModule } from "@angular/material/list";
-import { from, mergeMap } from "rxjs";
+import { concatMap, from } from "rxjs";
 
 @Component({
-    selector: 'dev-merge',
-    templateUrl: './dev-merge.html',
-    styleUrl: './dev-merge.scss',
+    selector: 'dev-concat',
+    templateUrl: './dev-concat.html',
+    styleUrl: './dev-concat.scss',
     imports: [MatListModule, MatIconModule]
 })
-export class MergeMapComponent {
+export class ConcatMapComponent {
     private http = inject(HttpClient);
     users: any[] = [];
     private cdr = inject(ChangeDetectorRef);
@@ -21,7 +21,7 @@ export class MergeMapComponent {
         // from - Convert array to observable
         from(userIds)
         .pipe(
-            mergeMap(id => this.http.get(`https://jsonplaceholder.typicode.com/users/${id}`))
+            concatMap(id => this.http.get(`https://jsonplaceholder.typicode.com/users/${id}`))
         )
         .subscribe((user: any) => {
             this.users.push(user);
