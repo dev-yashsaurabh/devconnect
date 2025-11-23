@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormControl, FormGroup, FormGroupDirective, NgForm, ReactiveFormsModule, Validators } from "@angular/forms";
+import { AbstractControl, FormControl, FormGroup, FormGroupDirective, NgForm, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { ErrorStateMatcher } from "@angular/material/core";
@@ -22,12 +22,17 @@ export class DevForm {
 
     constructor() {
         this.contactForm = new FormGroup({
-            email: new FormControl('', [Validators.required, Validators.email])
+            email: new FormControl('', [Validators.required, Validators.email]),
+            name: new FormControl('', [Validators.required, nameValidator])
         });
     }
 
     get email() {
         return this.contactForm.get('email') as FormControl;
+    }
+
+    get name() {
+        return this.contactForm.get('name') as FormControl;
     }
 
     onSubmit() {
@@ -42,4 +47,13 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
     const isSubmitted = form && form.submitted;
     return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
   }
+}
+
+export function nameValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value;
+
+  if (!value) return null;
+
+  const regex = /^[a-zA-Z ]+$/;
+  return regex.test(value) ? null : { invalidName: true };
 }
