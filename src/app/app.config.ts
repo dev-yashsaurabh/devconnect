@@ -1,5 +1,6 @@
 import {
   ApplicationConfig,
+  ErrorHandler,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection
 } from '@angular/core';
@@ -11,6 +12,8 @@ import { msalProviders } from './msal.config';
 
 import { MsalService, MsalGuard, MsalBroadcastService, MsalInterceptor } from '@azure/msal-angular';
 import { TokenInterceptor } from './core/auth/token.interceptor';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { CustomErrorHandler } from './custom-error-handler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +28,11 @@ export const appConfig: ApplicationConfig = {
 
     provideRouter(routes),
     provideBrowserGlobalErrorListeners(),
-    provideZonelessChangeDetection()
+    provideZonelessChangeDetection(),
+    MatSnackBarModule,
+    { 
+      provide: ErrorHandler,
+      useClass: CustomErrorHandler
+    },
   ]
 };
