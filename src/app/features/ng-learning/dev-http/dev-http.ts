@@ -25,6 +25,7 @@ export class DevHttp implements OnInit {
         this.http.get('/data.json')
             .subscribe(resp => {
                 this.jsonData = resp;
+                this.cdr.detectChanges();
                 console.log(this.jsonData);
             });
     }
