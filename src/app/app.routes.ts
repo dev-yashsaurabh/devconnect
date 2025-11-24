@@ -7,8 +7,16 @@ import { DevHttp } from './features/ng-learning/dev-http/dev-http';
 import { SwitchMapComponent } from './features/ng-learning/rxjs-operators/switch-map/dev-switch';
 import { MergeMapComponent } from './features/ng-learning/rxjs-operators/merge-map/dev-merge';
 import { ConcatMapComponent } from './features/ng-learning/rxjs-operators/concat-map/dev-concat';
+import { DevSignal } from './features/ng-learning/dev-signal/dev-signal';
+import { DevLinkedSignal } from './features/ng-learning/dev-signal/dev-linked-signal';
 
 export const routes: Routes = [
+    {
+      path: 'signal', component: DevSignal
+    },
+    {
+      path: 'linked-signal', component: DevLinkedSignal
+    },
     {
       path: 'form', component: DevForm
     },
