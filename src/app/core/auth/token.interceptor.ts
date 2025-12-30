@@ -10,61 +10,68 @@ export class TokenInterceptor implements HttpInterceptor {
 
   constructor(
     private auth: AuthService,
-    private msal: MsalService,
-    private router: Router
+    private msal: MsalService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const user = this.auth.currentUser();
 
-    const provider = this.auth.currentUser()?.provider;
+    // Public endpoints
+    if (this.isPublic(req.url)) {
+      return next.handle(req);
+    }
 
-    // Skip public endpoints
-    const isPublic = ['/api/login', '/api/register'].some(
-      url => req.url.includes(url)
-    );
-    if (isPublic) return next.handle(req);
-    if (provider === 'jwt') {
+    if (user?.provider === 'jwt') {
       const token = this.auth.getToken();
       if (token) {
-        const authReq = req.clone({
-          setHeaders: { Authorization: `Bearer ${token}` }
-        });
-        return this.handle401(authReq, next);
+        req = this.attachToken(req, token);
       }
-    }
-    
-    if (provider === 'msal') {
-      const account = this.msal.instance.getActiveAccount();
-
-      if (account) {
-        return from(
-          this.msal.acquireTokenSilent({
-            scopes: ['user.read'],
-            account
-          })
-        ).pipe(
-          switchMap(result => {
-            const authReq = req.clone({
-              setHeaders: { Authorization: `Bearer ${result.accessToken}` }
-            });
-            return this.handle401(authReq, next);
-          })
-        );
-      }
+      return this.handle401(next.handle(req));
     }
 
-    return this.handle401(req, next);
+    if (user?.provider === 'msal') {
+      return this.handleMsal(req, next);
+    }
+
+    return this.handle401(next.handle(req));
   }
 
-  private handle401(req: HttpRequest<any>, next: HttpHandler) {
-    return next.handle(req).pipe(
+  private handleMsal(req: HttpRequest<any>, next: HttpHandler) {
+    const account = this.msal.instance.getActiveAccount();
+    if (!account) return next.handle(req);
+
+    return from(
+      this.msal.acquireTokenSilent({
+        scopes: ['user.read'],
+        account
+      })
+    ).pipe(
+      switchMap(result =>
+        this.handle401(
+          next.handle(this.attachToken(req, result.accessToken))
+        )
+      )
+    );
+  }
+
+  private attachToken(req: HttpRequest<any>, token: string) {
+    return req.clone({
+      setHeaders: { Authorization: `Bearer ${token}` }
+    });
+  }
+
+  private handle401(stream$: Observable<HttpEvent<any>>) {
+    return stream$.pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          this.auth.logout();
-          this.router.navigate(['/login']);
+          this.auth.logout(); // logout already redirects
         }
         return throwError(() => error);
       })
     );
+  }
+
+  private isPublic(url: string) {
+    return ['/api/login', '/api/register'].some(u => url.includes(u));
   }
 }
