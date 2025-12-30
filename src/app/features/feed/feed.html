@@ -1,13 +1,13 @@
 <h2 class="page-title">Developer Feed</h2>
 
-<!-- Skeletons -->
+<!-- Skeletons at top if loading -->
 <div *ngIf="loading()" class="feed-grid">
-  @for(i of skeletons; track i){<div class="skeleton-card"></div>}
+  <div class="skeleton-card" *ngFor="let i of skeletons"></div>
 </div>
 
 <!-- Real Feed -->
-<div *ngIf="!loading()" class="feed-grid">
-  @for(project of projects(); track project.id){<mat-card
+<div class="feed-grid">
+  @for(project of projects(); track project.id) {<mat-card
     class="project-card"
   >
     <h3 class="title">{{ project.title }}</h3>
@@ -30,6 +30,15 @@
         {{ project.likes }}
       </button>
     </div>
-  </mat-card>
-}
+  </mat-card>}
+</div>
+
+<!-- Skeletons at bottom while loading more -->
+<div *ngIf="loading() && projects().length" class="feed-grid">
+  <div class="skeleton-card" *ngFor="let i of skeletons"></div>
+</div>
+
+<!-- End of feed message -->
+<div *ngIf="!loading() && !hasMore()" class="end-text">
+  🎉 You’re all caught up!
 </div>

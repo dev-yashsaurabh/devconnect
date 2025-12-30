@@ -1,33 +1,45 @@
 import { Injectable, signal } from '@angular/core';
 import { Project } from './feed.model';
 import { FEED_MOCK } from './feed.mock';
+import { delay } from 'rxjs';
+import { of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class FeedService {
-  private _projects = signal<Project[]>([]);
-  private _loading = signal(false);
+  projects = signal<Project[]>([]);
+  loading = signal(false);
+  page = signal(1);
+  hasMore = signal(true);
+  limit = 6; // 6 per page
 
-  projects = this._projects.asReadonly();
-  loading = this._loading.asReadonly();
+  loadMore() {
+    if (this.loading() || !this.hasMore()) return;
 
-  loadFeed() {
-    this._loading.set(true);
+    this.loading.set(true);
 
-    // simulate API delay
-    setTimeout(() => {
-      this._projects.set(FEED_MOCK);
-      this._loading.set(false);
-    }, 800);
+    // simulate API call with RxJS of() + delay
+    const start = (this.page() - 1) * this.limit;
+    const end = start + this.limit;
+    const data = FEED_MOCK.slice(start, end);
+
+    of({ data, hasMore: end < FEED_MOCK.length })
+      .pipe(delay(500)) // simulate network delay
+      .subscribe(res => {
+        this.projects.update(p => [...p, ...res.data]);
+        this.hasMore.set(res.hasMore);
+        this.page.update(p => p + 1);
+        this.loading.set(false);
+      });
   }
 
-  like(projectId: number) {
-    this._projects.update(projects =>
+  like(id: number) {
+    this.projects.update(projects =>
       projects.map(p =>
-        p.id === projectId
+        p.id === id
           ? {
               ...p,
-              likes: p.likedByMe ? p.likes - 1 : p.likes + 1,
               likedByMe: !p.likedByMe,
+              likes: p.likes + (p.likedByMe ? -1 : 1),
             }
           : p
       )

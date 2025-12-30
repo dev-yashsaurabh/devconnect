@@ -1,31 +1,11 @@
 import { Project } from './feed.model';
 
-export const FEED_MOCK: Project[] = [
-  {
-    id: 1,
-    title: 'DevConnect Platform',
-    description: 'A developer networking platform built with Angular & Go.',
-    tags: ['Angular', 'Go', 'MongoDB'],
-    likes: 12,
-    likedByMe: false,
-    createdBy: { id: 1, name: 'Yash' },
-  },
-  {
-    id: 2,
-    title: 'RxJS Mastery',
-    description: 'Hands-on RxJS operators with real use cases.',
-    tags: ['RxJS', 'Angular'],
-    likes: 8,
-    likedByMe: true,
-    createdBy: { id: 2, name: 'Aman' },
-  },
-  {
-    id: 3,
-    title: 'Auth System',
-    description: 'JWT + Microsoft SSO authentication system.',
-    tags: ['JWT', 'MSAL', 'Security'],
-    likes: 20,
-    likedByMe: false,
-    createdBy: { id: 3, name: 'Rohit' },
-  },
-];
+export const FEED_MOCK: Project[] = Array.from({ length: 30 }).map((_, i) => ({
+  id: i + 1,
+  title: `Project ${i + 1}`,
+  description: `This is a description for project ${i + 1}.`,
+  tags: ['Angular', 'RxJS', 'Mock'],
+  likes: Math.floor(Math.random() * 20),
+  likedByMe: false,
+  createdBy: { id: i % 5 + 1, name: `User ${i % 5 + 1}` },
+}));
