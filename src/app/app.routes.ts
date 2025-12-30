@@ -15,7 +15,7 @@ export const routes: Routes = [
   {
     path: 'feed',
     component: Feed,
-    canActivate: [authGuard], 
+    // canActivate: [authGuard], 
     data: { roles: ['developer', 'admin'] }
   },
   {

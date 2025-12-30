@@ -2,6 +2,9 @@
 // components according to the Material 3 design spec.
 // custom components at https://material.angular.dev/guide/theming
 @use './styles/_devconnect-theme' as *;
+* {
+  box-sizing: border-box;
+}
 
 html, body {
   height: 100%;

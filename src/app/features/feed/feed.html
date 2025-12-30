@@ -1,0 +1,35 @@
+<h2 class="page-title">Developer Feed</h2>
+
+<!-- Skeletons -->
+<div *ngIf="loading()" class="feed-grid">
+  @for(i of skeletons; track i){<div class="skeleton-card"></div>}
+</div>
+
+<!-- Real Feed -->
+<div *ngIf="!loading()" class="feed-grid">
+  @for(project of projects(); track project.id){<mat-card
+    class="project-card"
+  >
+    <h3 class="title">{{ project.title }}</h3>
+
+    <p class="description">{{ project.description }}</p>
+
+    <div class="tags">
+      <span class="tag" *ngFor="let tag of project.tags">
+        {{ tag }}
+      </span>
+    </div>
+
+    <div class="footer">
+      <span class="author">By {{ project.createdBy.name }}</span>
+
+      <button mat-button class="like-btn" (click)="toggleLike(project.id)">
+        <span class="heart" [class.liked]="project.likedByMe">
+          {{ project.likedByMe ? '💙' : '🤍' }}
+        </span>
+        {{ project.likes }}
+      </button>
+    </div>
+  </mat-card>
+}
+</div>
