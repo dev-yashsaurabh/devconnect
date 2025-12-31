@@ -1,0 +1,94 @@
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <div mat-card-avatar class="avatar">
+        <img
+          *ngIf="profileForm.get('profilePic')?.value"
+          [src]="profileForm.get('profilePic')?.value"
+          alt="Profile picture"
+        />
+      </div>
+      <mat-card-title>{{ profileForm.get('name')?.value || 'User Profile' }}</mat-card-title>
+      <mat-card-subtitle>{{ profileForm.get('email')?.value }}</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+    <!-- Name -->
+    <mat-form-field appearance="outline">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="profileForm.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" />
+      <mat-error *ngIf="profileForm.get('email')?.hasError('email')">
+        Invalid email
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Bio -->
+    <mat-form-field appearance="outline">
+      <mat-label>Bio</mat-label>
+      <textarea matInput rows="3" formControlName="bio"></textarea>
+    </mat-form-field>
+
+    <!-- Skills -->
+    <mat-form-field appearance="outline">
+      <mat-label>Skills</mat-label>
+
+      <mat-chip-grid #chipGrid formArrayName="skills">
+        <mat-chip-row
+          *ngFor="let skill of skills.controls; let i = index"
+          (removed)="removeSkill(i)"
+        >
+          {{ skill.value }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+
+        <input
+          placeholder="Add skill"
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addSkillFromInput($event)"
+        />
+      </mat-chip-grid>
+    </mat-form-field>
+
+    <!-- Social links -->
+    <div formGroupName="socialLinks" class="social-links">
+      <mat-form-field appearance="outline">
+        <mat-label>GitHub</mat-label>
+        <input matInput formControlName="github" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>LinkedIn</mat-label>
+        <input matInput formControlName="linkedin" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Twitter</mat-label>
+        <input matInput formControlName="twitter" />
+      </mat-form-field>
+    </div>
+
+    <!-- Profile pic -->
+    <mat-form-field appearance="outline">
+      <mat-label>Profile Picture URL</mat-label>
+      <input matInput formControlName="profilePic" />
+    </mat-form-field>
+
+    <!-- Submit -->
+    <button matButton="filled" color="primary" type="submit" [disabled]="profileForm.invalid">
+      Save Profile
+    </button>
+  </form>
+</div>

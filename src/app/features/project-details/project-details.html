@@ -1,0 +1,15 @@
+<mat-card *ngIf="project() as p" class="details-card">
+  <h2 class="title">{{ p.title }}</h2>
+  <p class="description">{{ p.description }}</p>
+
+  <div class="tags">
+    <span class="tag" *ngFor="let tag of p.tags">{{ tag }}</span>
+  </div>
+
+  <p class="author">By {{ p.createdBy.name }}</p>
+
+  <button mat-raised-button color="primary" class="like-btn" (click)="toggleLike()">
+    <span class="heart" [class.liked]="p.likedByMe">{{ p.likedByMe ? '💙' : '🤍' }}</span>
+    {{ p.likes }}
+  </button>
+</mat-card>

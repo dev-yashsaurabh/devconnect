@@ -1,0 +1,45 @@
+<h2 class="page-title">Developer Feed</h2>
+
+<!-- Skeletons at top if loading -->
+<div *ngIf="loading()" class="feed-grid">
+  <div class="skeleton-card" *ngFor="let i of skeletons"></div>
+</div>
+
+<!-- Real Feed -->
+<div class="feed-grid">
+  @for(project of projects(); track project.id) {<mat-card
+    class="project-card"
+    [routerLink]="['/project', project.id]"
+  >
+    <h3 class="title">{{ project.title }}</h3>
+
+    <p class="description">{{ project.description }}</p>
+
+    <div class="tags">
+      <span class="tag" *ngFor="let tag of project.tags">
+        {{ tag }}
+      </span>
+    </div>
+
+    <div class="footer">
+      <span class="author">By {{ project.createdBy.name }}</span>
+
+      <button mat-button class="like-btn" (click)="toggleLike(project.id)">
+        <span class="heart" [class.liked]="project.likedByMe">
+          {{ project.likedByMe ? '💙' : '🤍' }}
+        </span>
+        {{ project.likes }}
+      </button>
+    </div>
+  </mat-card>}
+</div>
+
+<!-- Skeletons at bottom while loading more -->
+<div *ngIf="loading() && projects().length" class="feed-grid">
+  <div class="skeleton-card" *ngFor="let i of skeletons"></div>
+</div>
+
+<!-- End of feed message -->
+<div *ngIf="!loading() && !hasMore()" class="end-text">
+  🎉 You’re all caught up!
+</div>
