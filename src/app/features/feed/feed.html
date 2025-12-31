@@ -9,6 +9,7 @@
 <div class="feed-grid">
   @for(project of projects(); track project.id) {<mat-card
     class="project-card"
+    [routerLink]="['/project', project.id]"
   >
     <h3 class="title">{{ project.title }}</h3>
 

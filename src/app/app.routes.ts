@@ -27,6 +27,14 @@ export const routes: Routes = [
 
   },
   {
+    path: 'project/:id',
+    loadComponent: () => import('./features/project-details/project-details').then(m => m.ProjectDetails)
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./features/user-profile/profile').then(m => m.ProfileComponent)
+  },
+  {
     path: 'signal', component: DevSignal
   },
   {

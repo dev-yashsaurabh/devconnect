@@ -3,11 +3,12 @@ import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { FeedService } from './feed.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-feed',
-  imports: [CommonModule, MatCardModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, RouterModule],
   templateUrl: './feed.html',
   styleUrls: ['./feed.scss'],
 })
@@ -37,10 +38,5 @@ export class Feed implements OnInit {
     if (height - position < threshold) {
       this.feed.loadMore(); // service handles pagination
     }
-  }
-
-  // Optional: TrackBy for performance
-  trackById(_: number, project: any) {
-    return project.id;
   }
 }
