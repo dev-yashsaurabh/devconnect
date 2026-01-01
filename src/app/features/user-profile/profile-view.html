@@ -1,0 +1,28 @@
+<mat-card class="profile-card">
+  <mat-card-header>
+    <div mat-card-avatar class="avatar">
+      <img [src]="profile.profilePic" />
+    </div>
+    <mat-card-title>{{ profile.name }}</mat-card-title>
+    <mat-card-subtitle>{{ profile.email }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="bio">{{ profile.bio }}</p>
+
+    <h4>Skills</h4>
+    <mat-chip-set>
+      <mat-chip *ngFor="let skill of profile.skills">{{ skill }}</mat-chip>
+    </mat-chip-set>
+
+    <h4>Social</h4>
+    <a [href]="profile.socialLinks.github" target="_blank">GitHub</a><br />
+    <a [href]="profile.socialLinks.linkedin" target="_blank">LinkedIn</a>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="editProfile()">
+      Edit Profile
+    </button>
+  </mat-card-actions>
+</mat-card>
