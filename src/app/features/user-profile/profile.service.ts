@@ -1,19 +1,28 @@
-// profile.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { UserProfile } from './user-profile.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  private apiUrl = 'http://localhost:8080/profile'; // Replace with your backend URL
 
-  constructor(private http: HttpClient) {}
-
-  getProfile(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/me`);
+  getMyProfile(): Observable<UserProfile> {
+    // Replace with real API later
+    return of({
+      name: 'Yash Kumar',
+      email: 'yash@email.com',
+      bio: 'Frontend Developer | Angular',
+      profilePic: 'https://i.pravatar.cc/150',
+      skills: ['Angular', 'TypeScript', 'RxJS'],
+      socialLinks: {
+        github: 'https://github.com/yash',
+        linkedin: 'https://linkedin.com/in/yash',
+        twitter: ''
+      }
+    });
   }
 
-  updateProfile(profile: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/me`, profile);
+  updateMyProfile(payload: UserProfile): Observable<UserProfile> {
+    console.log('Updating profile:', payload);
+    return of(payload);
   }
 }

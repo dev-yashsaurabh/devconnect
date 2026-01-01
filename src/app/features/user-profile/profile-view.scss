@@ -1,0 +1,123 @@
+/* ===== Card animation ===== */
+.profile-card {
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 8px;
+
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeSlideIn 280ms ease-out forwards;
+}
+
+/* ===== Avatar animation ===== */
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #e0e0e0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: zoomIn 250ms ease-out forwards;
+  }
+}
+
+/* ===== Header text ===== */
+mat-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+mat-card-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ===== Bio ===== */
+.bio {
+  margin: 12px 0 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+/* ===== Section headings ===== */
+h4 {
+  margin: 16px 0 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* ===== Skills chips ===== */
+mat-chip-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+mat-chip {
+  font-size: 0.85rem;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* ===== Social links ===== */
+a {
+  display: inline-block;
+  margin-right: 12px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #1976d2;
+
+  transition: color 120ms ease;
+
+  &:hover {
+    color: #0d47a1;
+  }
+}
+
+/* ===== Actions ===== */
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16px;
+}
+
+button {
+  transition: transform 120ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* ===== Keyframes ===== */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
