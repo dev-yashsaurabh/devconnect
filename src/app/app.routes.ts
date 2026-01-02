@@ -9,53 +9,72 @@ import { ConcatMapComponent } from './features/ng-learning/rxjs-operators/concat
 import { DevSignal } from './features/ng-learning/dev-signal/dev-signal';
 import { DevLinkedSignal } from './features/ng-learning/dev-signal/dev-linked-signal';
 import { authGuard } from './core/auth/auth.guard';
+import { PublicLayoutComponent } from './layouts/public-layout';
+import { PrivateLayoutComponent } from './layouts/private-layout';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
   {
-    path: 'feed',
-    component: Feed,
-    // canActivate: [authGuard], 
-    data: { roles: ['developer', 'admin'] }
+    path: 'login',
+    component: PublicLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/login/login').then(m => m.Login)
+      }
+    ]
   },
   {
-    path: 'admin',
+    path: '',
+    component: PrivateLayoutComponent,
     canActivate: [authGuard],
-    data: { roles: ['admin'] },
-    loadComponent: () =>
-      import('./features/admin/admin').then(m => m.Admin)
+    children: [
+      {
+        path: 'feed',
+        loadComponent: () =>
+          import('./features/feed/feed').then(m => m.Feed)
+      },
+      {
+        path: 'profile',
+        loadChildren: () =>
+          import('./features/user-profile/profile.routes').then(m => m.PROFILE_ROUTES)
+      }
+    ]
+  },
+//   {
+//     path: 'admin',
+//     canActivate: [authGuard],
+//     data: { roles: ['admin'] },
+//     loadComponent: () =>
+//       import('./features/admin/admin').then(m => m.Admin)
 
-  },
-  {
-    path: 'project/:id',
-    loadComponent: () => import('./features/project-details/project-details').then(m => m.ProjectDetails)
-  },
-  {
-  path: 'profile',
-  loadChildren: () => import('./features/user-profile/profile.routes').then(m => m.PROFILE_ROUTES)
-}
-,
-  {
-    path: 'signal', component: DevSignal
-  },
-  {
-    path: 'linked-signal', component: DevLinkedSignal
-  },
-  {
-    path: 'form', component: DevForm
-  },
-  {
-    path: 'http', component: DevHttp
-  },
-  {
-    path: 'switchMap', component: SwitchMapComponent
-  },
-  {
-    path: 'mergeMap', component: MergeMapComponent
-  },
-  {
-    path: 'concatMap', component: ConcatMapComponent
-  },
+//   },
+//   {
+//     path: 'project/:id',
+//     loadComponent: () => import('./features/project-details/project-details').then(m => m.ProjectDetails)
+//   }
+// ,
+//   {
+//     path: 'signal', component: DevSignal
+//   },
+//   {
+//     path: 'linked-signal', component: DevLinkedSignal
+//   },
+//   {
+//     path: 'form', component: DevForm
+//   },
+//   {
+//     path: 'http', component: DevHttp
+//   },
+//   {
+//     path: 'switchMap', component: SwitchMapComponent
+//   },
+//   {
+//     path: 'mergeMap', component: MergeMapComponent
+//   },
+//   {
+//     path: 'concatMap', component: ConcatMapComponent
+//   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
   { path: '**', redirectTo: 'login' },
