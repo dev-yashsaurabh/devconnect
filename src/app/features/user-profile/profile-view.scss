@@ -121,3 +121,17 @@ button {
     opacity: 1;
   }
 }
+
+.profile-card {
+  position: relative;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.edit-btn {
+  margin-right: 16px;
+}

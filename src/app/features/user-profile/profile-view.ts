@@ -6,13 +6,14 @@ import { MatCardModule } from "@angular/material/card";
 import { MatChipsModule } from "@angular/material/chips";
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from "@angular/material/icon";
 
 @Component({
   standalone: true,
   selector: 'app-profile-view',
   templateUrl: './profile-view.html',
   styleUrls: ['./profile-view.scss'],
-  imports: [MatCardModule, MatChipsModule, CommonModule, MatButtonModule]
+  imports: [MatCardModule, MatChipsModule, CommonModule, MatButtonModule, MatIconModule]
 })
 export class ProfileViewComponent implements OnInit {
   profile!: UserProfile;

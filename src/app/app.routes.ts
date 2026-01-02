@@ -38,7 +38,11 @@ export const routes: Routes = [
         path: 'profile',
         loadChildren: () =>
           import('./features/user-profile/profile.routes').then(m => m.PROFILE_ROUTES)
-      }
+      },
+      {
+        path: 'project/:id',
+        loadComponent: () => import('./features/project-details/project-details').then(m => m.ProjectDetails)
+      },
     ]
   },
 //   {
@@ -49,10 +53,6 @@ export const routes: Routes = [
 //       import('./features/admin/admin').then(m => m.Admin)
 
 //   },
-//   {
-//     path: 'project/:id',
-//     loadComponent: () => import('./features/project-details/project-details').then(m => m.ProjectDetails)
-//   }
 // ,
 //   {
 //     path: 'signal', component: DevSignal
