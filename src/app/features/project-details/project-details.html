@@ -12,4 +12,21 @@
     <span class="heart" [class.liked]="p.likedByMe">{{ p.likedByMe ? '💙' : '🤍' }}</span>
     {{ p.likes }}
   </button>
+
+  <!-- Comments Section -->
+  <div class="comments-section">
+    <h3>Comments ({{ p.comments?.length || 0 }})</h3>
+
+    <div class="comment" *ngFor="let c of p.comments">
+      <strong>{{ c.author }}</strong> <span class="date">{{ c.createdAt | date:'short' }}</span>
+      <p>{{ c.text }}</p>
+    </div>
+
+    <div class="add-comment">
+      <mat-form-field appearance="outline" class="comment-input">
+        <input matInput placeholder="Write a comment..." [(ngModel)]="newCommentText">
+      </mat-form-field>
+      <button mat-raised-button color="accent" (click)="addComment()">Add</button>
+    </div>
+  </div>
 </mat-card>
