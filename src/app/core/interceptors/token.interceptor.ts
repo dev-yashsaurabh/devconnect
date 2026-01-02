@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../auth/auth.service";
 import { catchError, from, Observable, switchMap, throwError } from "rxjs";
 import { MsalService } from "@azure/msal-angular";
 import { environment } from "../../../environments/environment";

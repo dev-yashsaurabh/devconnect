@@ -11,7 +11,7 @@ import { routes } from './app.routes';
 import { msalProviders } from './msal.config';
 
 import { MsalService, MsalGuard, MsalBroadcastService } from '@azure/msal-angular';
-import { TokenInterceptor } from './core/auth/token.interceptor';
+import { TokenInterceptor } from './core/interceptors/token.interceptor';
 import { CustomErrorHandler } from './custom-error-handler';
 
 export const appConfig: ApplicationConfig = {
