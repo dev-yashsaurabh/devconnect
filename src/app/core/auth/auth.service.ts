@@ -48,7 +48,7 @@ export class AuthService {
 
   // ===== WRITE =====
   login(email: string, password: string) {
-    return this.http.post<User>('/api/login', { email, password });
+    return this.http.post<User>('/auth/login', { email, password });
   }
 
   setJwtUser(user: User) {

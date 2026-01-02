@@ -2,8 +2,8 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { catchError, from, Observable, switchMap, throwError } from "rxjs";
-import { Router } from "@angular/router";
 import { MsalService } from "@azure/msal-angular";
+import { environment } from "../../../environments/environment";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -15,8 +15,13 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const user = this.auth.currentUser();
+    console.log(1)
+    if (!req.url.startsWith('http')) {
+      req = req.clone({
+        url: `${environment.apiUrl}${req.url}`
+      });
+    }
 
-    // Public endpoints
     if (this.isPublic(req.url)) {
       return next.handle(req);
     }
@@ -47,9 +52,7 @@ export class TokenInterceptor implements HttpInterceptor {
       })
     ).pipe(
       switchMap(result =>
-        this.handle401(
-          next.handle(this.attachToken(req, result.accessToken))
-        )
+        this.handle401(next.handle(this.attachToken(req, result.accessToken)))
       )
     );
   }
@@ -64,7 +67,7 @@ export class TokenInterceptor implements HttpInterceptor {
     return stream$.pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          this.auth.logout(); // logout already redirects
+          this.auth.logout();
         }
         return throwError(() => error);
       })
@@ -72,6 +75,6 @@ export class TokenInterceptor implements HttpInterceptor {
   }
 
   private isPublic(url: string) {
-    return ['/api/login', '/api/register'].some(u => url.includes(u));
+    return ['/api/auth/login', '/api/auth/register'].some(u => url.includes(u));
   }
 }
